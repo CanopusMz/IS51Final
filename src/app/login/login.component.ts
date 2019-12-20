@@ -2,12 +2,23 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastService } from '../toast/toast.service';
 import { Subject } from 'rxjs';
+
+export interface IUser {
+  id?: number;
+  username: string;
+  password: string;
+}
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+
+  user: IUser = {
+    username: null,
+    password: null
+  };
 
   constructor(private router: Router, private toastService: ToastService) {
   }
@@ -16,4 +27,21 @@ export class LoginComponent implements OnInit {
 
   }
 
+  login(user: IUser) {
+
+    const presetUser = { username: 'suhail', password: 'suhail123' };
+    if (user.username != null && user.password != null &&
+      user.username !== '' && user.password !== '') {
+      if (user.username === presetUser.username &&
+        user.password === presetUser.password) {
+        localStorage.setItem('user', JSON.stringify(user));
+        this.router.navigate(['cart', user]);
+        this.toastService.showToast('success', 2000, 'Successfully logged in');
+      } else {
+      this.toastService.showToast('warning', 2000, 'Username or password is wrong! Check your inputs.');
+      }
+    } else {
+      this.toastService.showToast('danger', 2000, 'Must specifiy credentials');
+    }
+  }
 }
